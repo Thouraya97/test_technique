@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'locations.dart';
+import 'Model.dart';
 import 'package:geolocator/geolocator.dart';
 
 class View2 extends StatelessWidget {
@@ -23,8 +23,8 @@ class View2 extends StatelessWidget {
 
     final String carId;
   final String title;
-  final Boolean isClean; 
-  final Boolean isDamaged;
+  final bool isClean; 
+  final bool isDamaged;
    final String licencePlate;
   final int fuelLevel;
     final String hardwareId ;
@@ -72,7 +72,7 @@ class View2 extends StatelessWidget {
                 ),
         )
 
-      ),
-    );
+      );
+    
   }
 }

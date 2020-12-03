@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'locations.dart';
+import 'Model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'View2.dart';
 
@@ -12,9 +12,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GoogleMapController mapController;
+  Data data ;
 Position _currentPosition;
 String _currentAddress;
-final Geolocator geolocator = Geolocator().forceAndroidLocationManager;
+final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   final LatLng _center = const LatLng(45.521563, -122.677433);
 
 
@@ -28,24 +29,43 @@ final Geolocator geolocator = Geolocator().forceAndroidLocationManager;
   }
   final Map<String, Marker> _markers = {};
   Future<void> _onMapCreated(GoogleMapController controller) async {
-    final carLocations = await Data.getCarData();
+    final carLocations = await data.getCarData();
     setState(() {
       _markers.clear();
-      for (final data in carLocations.Data) {
+      data.forEach((Map<String,dynamic>data)) {
         final marker = Marker(
-          markerId: MarkerId(Data.carId),
-          position: LatLng(Data.lat, Data.lon),
+          markerId: MarkerId(data.carId),
+          position: LatLng(data.lat, data.lon),
           infoWindow: InfoWindow(
             
-            title: Data.title,
-            lat: Data.lat,
-            lon: Data.lon,
+            title: data.title,
+            lat: data.lat,
+            lon: data.lon,
+            onTap: Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => View2(
+                         
+                          lat:data.lat,
+                          carId:data.carId,
+                            title:data.title,
+                            lon:data.lon,
+                            vehicleTypeImageUrl:data.vehicleTypeImageUrl,
+                            damageDescription:data.damageDescription, 
+                            reservationState:data.reservationState,
+                            isClean:data.isClean,
+                           isDamaged:data.isDamaged,
+                        licencePlate:data.licencePlate,
+                      fuelLevel:data.fuelLevel,
+                        hardwareId:data.hardwareId,
+                          vehicleTypeId :data.vehicleTypeId,
+                        pricingTime:data.pricingTime,
+                      pricingParking:data.pricingParking,
+                      )))
             
       
           ),
         );
-        _markers[Data.title] = marker;
-      }
+        _markers[data.title] = marker;
+      };
     });
   }
 
@@ -62,25 +82,7 @@ final Geolocator geolocator = Geolocator().forceAndroidLocationManager;
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 11.0,
-            onTap: Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => View2(
-                          name: Data.name,
-                          lat:Data.lat,
-                          carId:Data.carId,
-                            title:Data.title,
-                            lon:Data.lon,
-                            vehicleTypeImageUrl:Data.vehicleTypeImageUr,
-                            damageDescription:Data.damageDescription, 
-                            reservationState:Data.reservationState,
-                            isClean:Data.isClean,
-                           isDamaged:Data.isDamaged,
-                        licencePlate:Data.licencePlate,
-                      fuelLevel:Data.fuelLevel,
-                        hardwareId:Data.hardwareId,
-                          vehicleTypeId :Data.vehicleTypeId,
-                        pricingTime:Data.pricingTime,
-                      pricingParking:Data.pricingParking,
-                      )));
+            
           ),
            markers: _markers.values.toSet(),
         mapType: MapType.normal,
